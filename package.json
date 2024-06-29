@@ -1,16 +1,25 @@
 {
   "name": "@tbht/thrift-cli",
   "description": "generate typescript code from thrift files",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "TbhT",
   "bin": {
     "thrift-cli": "./bin/run.js"
   },
+  "types": "dist/index.d.ts",
   "bugs": "https://github.com/TbhT/thrift-code-gen/issues",
   "dependencies": {
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
-    "@oclif/plugin-plugins": "^5"
+    "@oclif/plugin-plugins": "^5",
+    "@creditkarma/thrift-parser": "^2.0.0",
+    "camelcase": "^6.3.0",
+    "snake-case": "^3.0.4",
+    "directory-tree": "^3.5.1",
+    "schema-utils": "^4.0.0",
+    "tapable": "^2.2.1",
+    "ts-morph": "^23.0.0",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
@@ -42,8 +51,6 @@
     "oclif"
   ],
   "license": "Apache-2.0",
-  "main": "dist/index.js",
-  
   "oclif": {
     "bin": "thrift-cli",
     "dirname": "thrift-cli",
@@ -68,6 +75,5 @@
     "prepack": "oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md"
-  },
-  "types": "dist/index.d.ts"
+  }
 }

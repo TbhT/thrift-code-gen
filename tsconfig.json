@@ -1,12 +1,19 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "module": "commonjs",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "module": "CommonJS",
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
     "target": "es2022",
-    "composite": true
+    "composite": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
   "include": [
     "src/**/*"
