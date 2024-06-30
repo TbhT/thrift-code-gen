@@ -9,14 +9,14 @@
   "types": "dist/index.d.ts",
   "bugs": "https://github.com/TbhT/thrift-code-gen/issues",
   "dependencies": {
+    "@creditkarma/thrift-parser": "^2.0.0",
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^5",
-    "@creditkarma/thrift-parser": "^2.0.0",
     "camelcase": "^6.3.0",
-    "snake-case": "^3.0.4",
     "directory-tree": "^3.5.1",
     "schema-utils": "^4.0.0",
+    "snake-case": "^3.0.4",
     "tapable": "^2.2.1",
     "ts-morph": "^23.0.0",
     "tslib": "^2.3.1"
@@ -28,6 +28,7 @@
     "@types/mocha": "^10",
     "@types/node": "^18",
     "chai": "^4",
+    "copyfiles": "^2.4.1",
     "eslint": "^8",
     "eslint-config-oclif": "^5",
     "eslint-config-oclif-typescript": "^3",
@@ -36,7 +37,8 @@
     "oclif": "^4",
     "shx": "^0.3.3",
     "ts-node": "^10",
-    "typescript": "^5"
+    "typescript": "^5",
+    "tsc-alias": "^1.8.4"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -68,7 +70,7 @@
   },
   "repository": "TbhT/thrift-code-gen",
   "scripts": {
-    "build": "shx rm -rf dist && tsc -b",
+    "build": "shx rm -rf dist && copyfiles -u 1 src/**/*.ejs dist && tsc -b && tsc-alias",
     "lint": "eslint . --ext .ts",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "pnpm run lint",

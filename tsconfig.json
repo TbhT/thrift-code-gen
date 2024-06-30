@@ -8,7 +8,7 @@
     "rootDir": "src",
     "strict": true,
     "target": "es2022",
-    "composite": true,
+    "incremental": false,
     "paths": {
       "@/*": [
         "./src/*"
