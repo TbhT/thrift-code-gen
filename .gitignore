@@ -7,6 +7,8 @@
 /node_modules
 oclif.manifest.json
 *.tsbuildinfo
+/test/thrift-files
+/test/files-gens
 
 yarn.lock
 package-lock.json

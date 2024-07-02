@@ -45,6 +45,8 @@ class Compiler {
 
       const finalCallback = (_error: Error) => {
         // TODO: final callback
+
+        _callback?.()
       }
 
       const thriftDirTree = await readThriftDirs(this.options.sourceDir)

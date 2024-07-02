@@ -1,1 +1,8 @@
-{}
+{
+    "sourceDir": "./test/thrift-files",
+    "outputDir": "./test/files-gens",
+    "validatorOptions": {
+        "enable": true,
+        "entry": "*"
+    }
+}

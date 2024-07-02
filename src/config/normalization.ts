@@ -48,17 +48,6 @@ export interface ValidatorPluginOptions {
   schemaType: 'all' | 'class-validator' | 'joi' | 'zod'
 }
 
-export interface GuluControllerOptions {
-  enable: boolean
-  // if enabled, controller and path will use decorator mode
-  enableDecorator: boolean
-  outputDir?: string
-  // types files module path
-  typesModulePath: string
-  // validator files module path
-  validatorModulePath: string
-}
-
 export const DefaultTsConfigOptions: ProjectOptions = {
   compilerOptions: {
     target: ScriptTarget.ESNext,
@@ -98,10 +87,6 @@ export abstract class IdlPlugins {
 }
 
 export interface IdlOptions {
-  /**
-   * The gulu controller generated ts code plugin options
-   */
-  guluControllerOptions?: GuluControllerOptions
   /**
    * The generated ts mock code Plugin options
    */
@@ -158,13 +143,6 @@ export const defaultValidatorOptions = Object.freeze<ValidatorPluginOptions>({
   schemaType: 'joi',
 })
 
-export const defaultGuluControllerOptions = Object.freeze<GuluControllerOptions>({
-  enable: false,
-  enableDecorator: true,
-  typesModulePath: 'shared',
-  validatorModulePath: 'validator',
-})
-
 export const defaultNameConventional = Object.freeze<NameConventional>({
   method: 'original',
   service: 'original',
@@ -199,10 +177,6 @@ export const getNormalizedIdlOptions = (config: IdlOptions): IdlOptions => {
   const {outputDirPath, sourceDirPath} = normalizedDirPath(config)
 
   return {
-    guluControllerOptions: {
-      ...defaultGuluControllerOptions,
-      ...config.guluControllerOptions,
-    },
     mockOptions: {
       ...defaultMockOptions,
       ...config.mockOptions,
