@@ -1,7 +1,7 @@
 {
   "name": "@tbht/thrift-cli",
   "description": "generate typescript code from thrift files",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "TbhT",
   "bin": {
     "thrift-cli": "./bin/run.js"
