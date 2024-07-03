@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
+          registry-url: 'https://npm.pkg.github.com'
+
       - name: Setup pnpm
         run: npm install pnpm -g
 
