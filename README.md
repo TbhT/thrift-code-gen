@@ -1,399 +1,368 @@
-@tbht/thrift-cli
-=================
+# thrift-cli ⚡
 
-generate typescript code from thrift files
+---
 
+> A tool to help developers use Thrift for __BFF__ (Backend for Frontend) development, reducing manual boilerplate code.
 
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/@tbht/thrift-cli.svg)](https://npmjs.org/package/@tbht/thrift-cli)
-[![Downloads/week](https://img.shields.io/npm/dw/@tbht/thrift-cli.svg)](https://npmjs.org/package/@tbht/thrift-cli)
+- 💡 Generates boilerplate code based on the Thrift IDL, including `ts-types`, `validator`, and `mock` code.
 
 
-<!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
-# Usage
-<!-- usage -->
-```sh-session
-$ npm install -g @tbht/thrift-cli
-$ thrift-cli COMMAND
-running command...
-$ thrift-cli (--version)
-@tbht/thrift-cli/0.0.0 darwin-arm64 node-v18.19.0
-$ thrift-cli --help [COMMAND]
-USAGE
-  $ thrift-cli COMMAND
-...
-```
-<!-- usagestop -->
-# Commands
-<!-- commands -->
-- [@tbht/thrift-cli](#tbhtthrift-cli)
-- [Usage](#usage)
-- [Commands](#commands)
-  - [`thrift-cli hello PERSON`](#thrift-cli-hello-person)
-  - [`thrift-cli hello world`](#thrift-cli-hello-world)
-  - [`thrift-cli help [COMMAND]`](#thrift-cli-help-command)
-  - [`thrift-cli plugins`](#thrift-cli-plugins)
-  - [`thrift-cli plugins add PLUGIN`](#thrift-cli-plugins-add-plugin)
-  - [`thrift-cli plugins:inspect PLUGIN...`](#thrift-cli-pluginsinspect-plugin)
-  - [`thrift-cli plugins install PLUGIN`](#thrift-cli-plugins-install-plugin)
-  - [`thrift-cli plugins link PATH`](#thrift-cli-plugins-link-path)
-  - [`thrift-cli plugins remove [PLUGIN]`](#thrift-cli-plugins-remove-plugin)
-  - [`thrift-cli plugins reset`](#thrift-cli-plugins-reset)
-  - [`thrift-cli plugins uninstall [PLUGIN]`](#thrift-cli-plugins-uninstall-plugin)
-  - [`thrift-cli plugins unlink [PLUGIN]`](#thrift-cli-plugins-unlink-plugin)
-  - [`thrift-cli plugins update`](#thrift-cli-plugins-update)
+## Features
 
-## `thrift-cli hello PERSON`
+The `thrift-cli` scaffolding tool converts the Thrift IDL to corresponding TypeScript (TS) code. It currently generates the following types of code:
 
-Say hello
+- **ts types**
+  
+  Converts the Thrift file to TypeScript types and request code for browser usage.
+- **validator**
+  
+  Converts the Thrift file to request validation schemas defined in the `service`. Supported schema options include `Joi`, `Zod`, and `class-validator`.
 
-```
-USAGE
-  $ thrift-cli hello PERSON -f <value>
+- **mock**
+  
+  Generates TypeScript code that corresponds to the structure of the Thrift file.
 
-ARGUMENTS
-  PERSON  Person to say hello to
+- **controller (experimental)**
 
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
+  The generated code needs to be used in the appropriate positions of the controller, such as validator schemas that need to be used at the entry point of requests and TypeScript types that need to be imported in requests and responses. 
 
-DESCRIPTION
-  Say hello
+  The mock data also needs to be imported in the returned interface or places required by the frontend. The controller provides configurations to import these generated code into the controller.
 
-EXAMPLES
-  $ thrift-cli hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
 
-_See code: [src/commands/hello/index.ts](https://github.com/TbhT/thrift-code-gen/blob/v0.0.0/src/commands/hello/index.ts)_
+## IDL Config Options
 
-## `thrift-cli hello world`
+### Core Configuration
 
-Say hello world
+This section includes configurations related to the input/output directories of the Thrift files and naming conventions.
 
-```
-USAGE
-  $ thrift-cli hello world
+```typescript
+interface IdlOptions {
+  /**
+     * - Directory containing the `Thrift` files. Single file entry is not currently supported.
+     - Supports both relative and absolute paths. Relative paths are relative to the current working directory, i.e., `process.cwd()`.
+     *
+     * Example:
+     *
+     * sourceDir: './thrift-idl'
+     * sourceDir: '/var/tmp/thrift-idl'
+     */
+  sourceDir: string;
 
-DESCRIPTION
-  Say hello world
+  /**
+   * - Root directory for the generated code. Subdirectories will be created for different code scenarios.
+   *
+   * Example:
+   *
+   * outputDir: './files-gen'
+   *
+   * The final directory structure will be similar to the following (dependent on plugin configuration):
+   *
+   * ├── files-gens
+   * │   ├── class-validator
+   * │   │   └── pot-dto.ts
+   * │   ├── joi-validator
+   * │   │   └── pot-dto.ts
+   * │   ├── mock
+   * │   │   └── pot-dto.ts
+   * │   ├── ts-types
+   * │   │   └── pot-dto.ts
+   * │   └── zod-validator
+   * │       └── pot-dto.ts
+   * ├── idl.config.json
+   */
+  outputDir: string;
 
-EXAMPLES
-  $ thrift-cli hello world
-  hello world! (./src/commands/hello/world.ts)
-```
+  /**
+   * Plugin configuration for generating TypeScript type code. See [TS Plugin Configuration] for details.
+   */
+  tsPluginOptions?: TSPluginOptions;
 
-_See code: [src/commands/hello/world.ts](https://github.com/TbhT/thrift-code-gen/blob/v0.0.0/src/commands/hello/world.ts)_
+  /**
+   * Plugin configuration for generating mock data code. See [Mock Plugin Configuration] for details.
+   */
+  mockOptions?: MockPluginOptions;
 
-## `thrift-cli help [COMMAND]`
+  /**
+   * Plugin configuration for generating validator code. See [Validator Plugin Configuration] for details.
+   */
+  validatorOptions?: ValidatorPluginOptions;
 
-Display help for thrift-cli.
-
-```
-USAGE
-  $ thrift-cli help [COMMAND...] [-n]
-
-ARGUMENTS
-  COMMAND...  Command to show help for.
-
-FLAGS
-  -n, --nested-commands  Include all nested commands in the output.
-
-DESCRIPTION
-  Display help for thrift-cli.
+  /**
+   * Plugin configuration for generating Gulu2.0 controller template code. See [GuluController Plugin Configuration] for details.
+   */
+  guluControllerOptions?: GuluControllerOptions;
+}
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.3/src/commands/help.ts)_
+### TS Plugin Configuration
 
-## `thrift-cli plugins`
+This section mainly covers the configuration of the plugin responsible for generating TypeScript type code:
 
-List installed plugins.
+```typescript
+interface TSPluginOptions {
+  /**
+   *     Enable or disable the TS Plugin. It is enabled by default.
+   */
+  enable: boolean;
 
-```
-USAGE
-  $ thrift-cli plugins [--json] [--core]
+  /**
+   *     Specify the type to which the Thrift i64 type should be converted. Currently, only global configuration is supported, and the default type is number.
+   */
+  i64As: 'number' | 'string' | 'bigint';
 
-FLAGS
-  --core  Show core plugins.
+  /**
+   * Default handling of thrift fields when the required/optional specifier is not explicitly specified.
+   *
+   * If optIn is set to true, it means that if a type is used in the `request` type of a `service` and it is not explicitly marked as required,
+   * then it will be treated as `optional`. If optIn is set to false, it will be treated as `required`. optIn is set to true by default.
+   *
+   * If reqOut is set to true, it means that if a type is used in the `response` type of a `service` and it is not explicitly marked as required,
+   * then it will be treated as `required`. If reqOut is set to false, it will be treated as `optional`. reqOut is set to true by default.
+   *
+   * If a type is referenced in both the request and response, including direct and shorthand references, the configuration in the request will take precedence.
+   * This is because the referenced types in the request are resolved first before resolving the response types.
+   *
+   * Example
+   *
+   * The following is an example Thrift IDL definition:
+   *
+   *
+   * struct Example {
+   *  0: string field1
+   *  1: i64    field2
+   * }
+   *
+   * struct Req {
+   *  0: required Example reqField1
+   * }
+   *
+   * struct Res {
+   *  0: optional Example resField1
+   * }
+   *
+   * service S {
+   *  Res fn1(0: required Req req)
+   * }
+   *
+   * When using the default configuration for `requiredness`, the resulting TypeScript types will be as follows:
+   *
+   *
+   *
+   * export class S {
+   *   fn1(req: Req) {
+   *   }
+   * }
+   *
+   * export interface Req {
+   *   reqField1: Example;
+   * }
+   *
+   * export interface Example {
+   *   field1?: string;
+   *   field2?: number;
+   * }
+   *
+   * export interface Res {
+   *   resField1?: Example;
+   * }
+   *
+   *
+   * Since the type `Example` is first used in the `Req` type, and the fields inside it are not explicitly marked as required,
+   * the optIn default configuration is true, making them optional. Therefore, the fields in Example are optional.
+   */
+  requiredness: {
+    optIn: boolean;
+    reqOut: boolean;
+  };
 
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  List installed plugins.
-
-EXAMPLES
-  $ thrift-cli plugins
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.3.2/src/commands/plugins/index.ts)_
-
-## `thrift-cli plugins add PLUGIN`
-
-Installs a plugin into thrift-cli.
-
-```
-USAGE
-  $ thrift-cli plugins add PLUGIN... [--json] [-f] [-h] [-s | -v]
-
-ARGUMENTS
-  PLUGIN...  Plugin to install.
-
-FLAGS
-  -f, --force    Force npm to fetch remote resources even if a local copy exists on disk.
-  -h, --help     Show CLI help.
-  -s, --silent   Silences npm output.
-  -v, --verbose  Show verbose npm output.
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Installs a plugin into thrift-cli.
-
-  Uses npm to install plugins.
-
-  Installation of a user-installed plugin will override a core plugin.
-
-  Use the THRIFT_CLI_NPM_LOG_LEVEL environment variable to set the npm loglevel.
-  Use the THRIFT_CLI_NPM_REGISTRY environment variable to set the npm registry.
-
-ALIASES
-  $ thrift-cli plugins add
-
-EXAMPLES
-  Install a plugin from npm registry.
-
-    $ thrift-cli plugins add myplugin
-
-  Install a plugin from a github url.
-
-    $ thrift-cli plugins add https://github.com/someuser/someplugin
-
-  Install a plugin from a github slug.
-
-    $ thrift-cli plugins add someuser/someplugin
-```
-
-## `thrift-cli plugins:inspect PLUGIN...`
-
-Displays installation properties of a plugin.
-
-```
-USAGE
-  $ thrift-cli plugins inspect PLUGIN...
-
-ARGUMENTS
-  PLUGIN...  [default: .] Plugin to inspect.
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Displays installation properties of a plugin.
-
-EXAMPLES
-  $ thrift-cli plugins inspect myplugin
+  /**
+   * The output directory for the generated TypeScript type code files. If configured, it overrides the default output directory defined globally.
+   * The default output directory is `${outputDir}/ts-types`.
+   */
+  outputDir?: string;
+}
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.3.2/src/commands/plugins/inspect.ts)_
 
-## `thrift-cli plugins install PLUGIN`
+### Validator Plugin Configuration
 
-Installs a plugin into thrift-cli.
+This section mainly covers the configuration of the plugin responsible for generating validator schema code. Currently, there are three supported validation code generators:
+
+
+- [Joi](https://joi.dev/)
+
+- [Zod](https://zod.dev/)
+
+- [class-validator](https://github.com/typestack/class-validator)
+
+If the default generated validators do not meet your requirements, please refer to the documentation regarding Thrift annotations. Currently, the built-in annotations are mainly used to fulfill personalized needs.
+
+Here are the explanations for the plugin-related configurations:
+
+```typescript
+
+interface ValidatorPluginOptions {
+  /**
+   * Enable or disable the validator plugin. It is enabled by default.
+   */
+  enable: boolean;
+
+  /**
+   * Specify the type to which the Thrift i64 type should be converted. Currently, only global configuration is supported, and the default type is number.
+   */
+  i64As: 'number' | 'string' | 'bigint';
+
+  /**
+   * The type of schema to generate. 'all' means that code for all three types will be generated by default.
+   */
+  schemaType: 'zod' | 'joi' | 'class-validator' | 'all';
+
+  /**
+   * Determines which types are parsed for generating validators. 'service' means only types used in services will be parsed, which is the default behavior.
+   * '*' means all Thrift types will be parsed.
+   */
+  entry: 'service' | '*';
+
+  /**
+   * The output directory for the generated TypeScript type code files. If configured, it overrides the default output directory defined globally.
+   * The default output directory is `${outputDir}/joi-validator`.
+   */
+  outputDir?: string;
+}
+
 
 ```
-USAGE
-  $ thrift-cli plugins install PLUGIN... [--json] [-f] [-h] [-s | -v]
 
-ARGUMENTS
-  PLUGIN...  Plugin to install.
+### Mock Plugin Configuration
 
-FLAGS
-  -f, --force    Force npm to fetch remote resources even if a local copy exists on disk.
-  -h, --help     Show CLI help.
-  -s, --silent   Silences npm output.
-  -v, --verbose  Show verbose npm output.
+This plugin is primarily used to generate TypeScript mock data code based on fakerjs. Taking the following thrift IDL file as an example:
 
-GLOBAL FLAGS
-  --json  Format output as json.
+```thrift
 
-DESCRIPTION
-  Installs a plugin into thrift-cli.
+struct Example {
+  0: string field1
+  1: i64    field2
+}
 
-  Uses npm to install plugins.
+struct Req {
+  0: required Example reqField1
+}
 
-  Installation of a user-installed plugin will override a core plugin.
+struct Res {
+  0: optional Example resField1
+}
 
-  Use the THRIFT_CLI_NPM_LOG_LEVEL environment variable to set the npm loglevel.
-  Use the THRIFT_CLI_NPM_REGISTRY environment variable to set the npm registry.
-
-ALIASES
-  $ thrift-cli plugins add
-
-EXAMPLES
-  Install a plugin from npm registry.
-
-    $ thrift-cli plugins install myplugin
-
-  Install a plugin from a github url.
-
-    $ thrift-cli plugins install https://github.com/someuser/someplugin
-
-  Install a plugin from a github slug.
-
-    $ thrift-cli plugins install someuser/someplugin
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.3.2/src/commands/plugins/install.ts)_
-
-## `thrift-cli plugins link PATH`
-
-Links a plugin into the CLI for development.
+service S {
+  Res fn1(0: required Req req)
+}
 
 ```
-USAGE
-  $ thrift-cli plugins link PATH [-h] [--install] [-v]
 
-ARGUMENTS
-  PATH  [default: .] path to plugin
-
-FLAGS
-  -h, --help          Show CLI help.
-  -v, --verbose
-      --[no-]install  Install dependencies after linking the plugin.
-
-DESCRIPTION
-  Links a plugin into the CLI for development.
-  Installation of a linked plugin will override a user-installed or core plugin.
-
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
-  command will override the user-installed or core plugin implementation. This is useful for development work.
+The resulting TypeScript code, which can be directly imported when using the corresponding type, will be as follows. More annotations will be added in the future:
 
 
-EXAMPLES
-  $ thrift-cli plugins link myplugin
+```typescript
+import { faker } from '@faker-js/faker';
+
+export class Example {
+  field1 = faker.datatype.string();
+  field2 = faker.datatype.number();
+}
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.3.2/src/commands/plugins/link.ts)_
+The configuration options for the plugin are as follows:
 
-## `thrift-cli plugins remove [PLUGIN]`
+```typescript
+interface MockPluginOptions {
+  /**
+   * Whether to enable the mock plugin. It is enabled by default.
+   */
+  enable: boolean;
 
-Removes a plugin from the CLI.
+  /**
+   * Specify the type to which the Thrift i64 type should be converted. Currently, only global configuration is supported, and the default type is number.
+   */
+  i64As: 'number' | 'string' | 'bigint';
 
-```
-USAGE
-  $ thrift-cli plugins remove [PLUGIN...] [-h] [-v]
+  /**
+   * The output directory for the generated TypeScript mock data code files. If configured, it overrides the default output directory defined globally.
+   * The default output directory is `${outputDir}/mock`.
+   */
+  outputDir?: string;
+}
 
-ARGUMENTS
-  PLUGIN...  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ thrift-cli plugins unlink
-  $ thrift-cli plugins remove
-
-EXAMPLES
-  $ thrift-cli plugins remove myplugin
-```
-
-## `thrift-cli plugins reset`
-
-Remove all user-installed and linked plugins.
 
 ```
-USAGE
-  $ thrift-cli plugins reset [--hard] [--reinstall]
 
-FLAGS
-  --hard       Delete node_modules and package manager related files in addition to uninstalling plugins.
-  --reinstall  Reinstall all plugins after uninstalling.
-```
+### Example of Mock Annotations
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.3.2/src/commands/plugins/reset.ts)_
+The generation of mock code depends on fakerjs to generate mock data. Mock code is essentially a combination of the API provided by fakerjs with the corresponding structure in the IDL.
 
-## `thrift-cli plugins uninstall [PLUGIN]`
 
-Removes a plugin from the CLI.
 
-```
-USAGE
-  $ thrift-cli plugins uninstall [PLUGIN...] [-h] [-v]
+| annotation key | annotation value | meaning                                                                                   | example  |
+|:--------------:|:-----------------|:------------------------------------------------------------------------------------------|----------|
+| `mock` or `m`  | any string       | Indicates the mock code used for the current field. Currently, only fakerjs is supported. | see blow |
 
-ARGUMENTS
-  PLUGIN...  plugin to uninstall
 
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
+- Examples of mock-related IDL:
 
-DESCRIPTION
-  Removes a plugin from the CLI.
 
-ALIASES
-  $ thrift-cli plugins unlink
-  $ thrift-cli plugins remove
+```thrift
 
-EXAMPLES
-  $ thrift-cli plugins uninstall myplugin
-```
+typedef i64 Int64 (mock="typedef should not work")
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.3.2/src/commands/plugins/uninstall.ts)_
+typedef string Str (mock="faker.datatype.number()")
 
-## `thrift-cli plugins unlink [PLUGIN]`
+enum Foo {
+  A = 1 (mock="enum should not work"),
+  B = -2 (mock="enum should not work")
+}
 
-Removes a plugin from the CLI.
+struct MockStructWithoutAnnotation {
+  0: optional Int64 i64Field
+  1: required Str strField
+  2: list<string> strListField
+  3: list<number> numListField
+  4: list<map<string, string>> mapListField
+  5: map<string, list<number>> listMapField
+}
 
-```
-USAGE
-  $ thrift-cli plugins unlink [PLUGIN...] [-h] [-v]
-
-ARGUMENTS
-  PLUGIN...  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ thrift-cli plugins unlink
-  $ thrift-cli plugins remove
-
-EXAMPLES
-  $ thrift-cli plugins unlink myplugin
-```
-
-## `thrift-cli plugins update`
-
-Update installed plugins.
+struct MockStructWithAnnotation {
+  0: Int64 i64Field (mock="faker.datatype.number()")
+  1: Str strField1 (mock="faker.datatype.string()")
+  2: Str strField2 (mock="faker.lorem.paragraphs(5)")
+  3: Str strField3 (mock="faker.image.abstract(640, 480, false)")
+  4: list<map<string, string>> mapListField4 (mock="faker.address.countryCode('alpha-3')")
+  5: map<string, list<number>> listMapField5 (mock="faker.datatype.number({ min: 10, max: 100, precision: 0.01 })")
+}
 
 ```
-USAGE
-  $ thrift-cli plugins update [-h] [-v]
 
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
+- Example of generated mock code:
 
-DESCRIPTION
-  Update installed plugins.
+
+```typescript
+
+import { faker } from "@faker-js/faker";
+
+export class MockStructWithoutAnnotation {
+    i64Field = faker.datatype.number();
+    strField = faker.datatype.number();
+    strListField = Array.from({ length: 30 }).map(() => (faker.datatype.string()));
+    numListField = Array.from({ length: 30 }).map(() => (faker.datatype.number()));
+    mapListField = Array.from({ length: 30 }).map(() => ({[faker.datatype.string()]:faker.datatype.string()}));
+    listMapField = {[faker.datatype.string()]:Array.from({ length: 30 }).map(() => (faker.datatype.number()))};
+}
+
+export class MockStructWithAnnotation {
+    i64Field = faker.datatype.number();
+    strField1 = faker.datatype.string();
+    strField2 = faker.lorem.paragraphs(5);
+    strField3 = faker.image.abstract(640, 480, false);
+    mapListField4 = Array.from({ length: 30 }).map(() => (faker.address.countryCode('alpha-3')));
+    listMapField5 = {[faker.datatype.string()]:Array.from({ length: 30 }).map(() => (faker.datatype.number({ min: 10, max: 100, precision: 0.01 })))};
+}
+
+
 ```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.3.2/src/commands/plugins/update.ts)_
-<!-- commandsstop -->
