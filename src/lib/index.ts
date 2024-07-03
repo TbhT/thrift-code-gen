@@ -23,3 +23,6 @@ export const createCompiler = (rawOptions: IdlOptions) => {
 
   return compiler
 }
+
+export {default as Compiler} from './compiler'
+export {getNormalizedIdlOptions} from '@/config/normalization'

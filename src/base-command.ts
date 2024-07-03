@@ -14,7 +14,6 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
   static baseFlags = {
     config: Flags.string({
       char: 'c',
-      default: '',
       description: 'idl config file from cwd, eg: ./idl.config.json',
       required: true,
     }),
@@ -39,6 +38,10 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     // add any custom logic to handle errors from the command
     // or simply return the parent class error handling
     return super.catch(err)
+  }
+
+  protected createCompiler() {
+    this.compiler = createCompiler(this.jsonConfig)
   }
 
   protected async finally(_: Error | undefined): Promise<unknown> {
@@ -77,7 +80,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
       this.jsonConfig = config.default as IdlOptions
 
-      this.compiler = createCompiler(this.jsonConfig)
+      this.createCompiler()
     }
   }
 }
