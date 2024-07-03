@@ -7,12 +7,19 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: latest
+      - name: Setup pnpm
+        run: npm install pnpm -g
+
       - run: pnpm install
       - uses: JS-DevTools/npm-publish@19c28f1ef146469e409470805ea4279d47c3d35c
         with:
-          token: ${{ secrets.NPM_TOKEN }}
+          token: ${{ secrets.PAT }}

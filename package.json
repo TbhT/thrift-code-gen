@@ -68,7 +68,13 @@
       }
     }
   },
-  "repository": "TbhT/thrift-code-gen",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/TbhT/open-lark-ts.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "shx rm -rf dist && copyfiles -u 1 src/**/*.ejs dist && tsc -b && tsc-alias",
     "lint": "eslint . --ext .ts",
