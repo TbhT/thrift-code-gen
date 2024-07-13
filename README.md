@@ -1,12 +1,28 @@
-# thrift-cli ⚡
+# thrift-cli
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/@olierjs/thrift-cli.svg)](https://npmjs.org/package/@olierjs/thrift-cli)
 [![Downloads/week](https://img.shields.io/npm/dw/@olierjs/thrift-cli.svg)](https://npmjs.org/package/@olierjs/thrift-cli)
 
+
+- [thrift-cli](#thrift-cli)
+- [Usage](#usage)
+- [Commands](#commands)
+  - [`thrift-cli help [COMMAND]`](#thrift-cli-help-command)
+  - [`thrift-cli gen --config=/path/of/idl.config.json`](#thrift-cli-gen---configpathofidlconfigjson)
+- [Features](#features)
+  - [IDL Config Options](#idl-config-options)
+    - [Core Configuration](#core-configuration)
+    - [TS Plugin Configuration](#ts-plugin-configuration)
+    - [Validator Plugin Configuration](#validator-plugin-configuration)
+    - [Mock Plugin Configuration](#mock-plugin-configuration)
+    - [Example of Mock Annotations](#example-of-mock-annotations)
+
+
 > A tool to help developers use Thrift for __BFF__ (Backend for Frontend) development, reducing manual boilerplate code.
 
 - 💡 Generates boilerplate code based on the Thrift IDL, including `ts-types`, `validator`, and `mock` code.
+
 
 <!-- tocstop -->
 # Usage
@@ -45,6 +61,37 @@ DESCRIPTION
   Display help for thrift-cli.
 
 ```
+
+## `thrift-cli gen --config=/path/of/idl.config.json`
+
+
+```shell
+
+USAGE
+  $ thrift-cli gen --config=<params>
+
+ARGUMENTS
+  gen generate all template files
+
+FLAGS
+  --config the idl.config.json file path, relative current work directory
+
+```
+
+gen the typescript code files with `idl.config.json`, such as:
+
+```json
+{
+    "sourceDir": "./thrift-files",
+    "outputDir": "./files-gens",
+    "validatorOptions": {
+        "enable": true,
+        "entry": "*"
+    }
+}
+```
+
+more plugin config as belows:
 
 # Features
 
