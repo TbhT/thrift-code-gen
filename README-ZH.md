@@ -1,14 +1,14 @@
-@tbht/thrift-cli
+@olierjs/thrift-cli
 =================
 
 generate typescript code from thrift files
 
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/@tbht/thrift-cli.svg)](https://npmjs.org/package/@tbht/thrift-cli)
-[![Downloads/week](https://img.shields.io/npm/dw/@tbht/thrift-cli.svg)](https://npmjs.org/package/@tbht/thrift-cli)
+[![Version](https://img.shields.io/npm/v/@olierjs/thrift-cli.svg)](https://npmjs.org/package/@olierjs/thrift-cli)
+[![Downloads/week](https://img.shields.io/npm/dw/@olierjs/thrift-cli.svg)](https://npmjs.org/package/@olierjs/thrift-cli)
 
-
+ 
 <!-- toc -->
 * [Usage](#usage)
 * [Commands](#commands)
@@ -16,11 +16,11 @@ generate typescript code from thrift files
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g @tbht/thrift-cli
+$ npm install -g @olierjs/thrift-cli
 $ thrift-cli COMMAND
 running command...
 $ thrift-cli (--version)
-@tbht/thrift-cli/0.0.0 darwin-arm64 node-v18.19.0
+@olierjs/thrift-cli/0.0.0 darwin-arm64 node-v18.19.0
 $ thrift-cli --help [COMMAND]
 USAGE
   $ thrift-cli COMMAND
@@ -29,7 +29,7 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-- [@tbht/thrift-cli](#tbhtthrift-cli)
+- [@olierjs/thrift-cli](#tbhtthrift-cli)
 - [Usage](#usage)
 - [Commands](#commands)
   - [`thrift-cli hello PERSON`](#thrift-cli-hello-person)

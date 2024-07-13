@@ -1,33 +1,71 @@
 # thrift-cli ⚡
 
----
+[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
+[![Version](https://img.shields.io/npm/v/@olierjs/thrift-cli.svg)](https://npmjs.org/package/@olierjs/thrift-cli)
+[![Downloads/week](https://img.shields.io/npm/dw/@olierjs/thrift-cli.svg)](https://npmjs.org/package/@olierjs/thrift-cli)
 
 > A tool to help developers use Thrift for __BFF__ (Backend for Frontend) development, reducing manual boilerplate code.
 
 - 💡 Generates boilerplate code based on the Thrift IDL, including `ts-types`, `validator`, and `mock` code.
 
+<!-- tocstop -->
+# Usage
 
-## Features
+<!-- usagestop -->
+```sh-session
+$ npm install -g @olierjs/thrift-cli
+$ thrift-cli COMMAND
+running command...
+$ thrift-cli (--version)
+@olierjs/thrift-cli/0.1.9 darwin-arm64 node-v18.19.0
+$ thrift-cli --help [COMMAND]
+USAGE
+  $ thrift-cli COMMAND
+...
+```
+
+# Commands
+
+## `thrift-cli help [COMMAND]`
+
+Display help for thrift-cli
+
+```shell
+
+USAGE
+  $ thrift-cli help [COMMAND...] [-n]
+
+ARGUMENTS
+  COMMAND...  Command to show help for.
+
+FLAGS
+  -n, --nested-commands  Include all nested commands in the output.
+
+DESCRIPTION
+  Display help for thrift-cli.
+
+```
+
+# Features
 
 The `thrift-cli` scaffolding tool converts the Thrift IDL to corresponding TypeScript (TS) code. It currently generates the following types of code:
 
-- **ts types**
+- __ts types__
   
   Converts the Thrift file to TypeScript types and request code for browser usage.
-- **validator**
+- __validator__
   
   Converts the Thrift file to request validation schemas defined in the `service`. Supported schema options include `Joi`, `Zod`, and `class-validator`.
 
-- **mock**
+- __mock__
   
   Generates TypeScript code that corresponds to the structure of the Thrift file.
 
-- **controller (experimental)**
+- __controller (experimental)__
 
-  The generated code needs to be used in the appropriate positions of the controller, such as validator schemas that need to be used at the entry point of requests and TypeScript types that need to be imported in requests and responses. 
+  The generated code needs to be used in the appropriate positions of the controller, such as validator schemas that need to be used at the entry point of requests and TypeScript types that need to be imported in requests and responses.
 
   The mock data also needs to be imported in the returned interface or places required by the frontend. The controller provides configurations to import these generated code into the controller.
-
 
 ## IDL Config Options
 
@@ -183,11 +221,9 @@ interface TSPluginOptions {
 }
 ```
 
-
 ### Validator Plugin Configuration
 
 This section mainly covers the configuration of the plugin responsible for generating validator schema code. Currently, there are three supported validation code generators:
-
 
 - [Joi](https://joi.dev/)
 
@@ -260,7 +296,6 @@ service S {
 
 The resulting TypeScript code, which can be directly imported when using the corresponding type, will be as follows. More annotations will be added in the future:
 
-
 ```typescript
 import { faker } from '@faker-js/faker';
 
@@ -298,15 +333,11 @@ interface MockPluginOptions {
 
 The generation of mock code depends on fakerjs to generate mock data. Mock code is essentially a combination of the API provided by fakerjs with the corresponding structure in the IDL.
 
-
-
 | annotation key | annotation value | meaning                                                                                   | example  |
-|:--------------:|:-----------------|:------------------------------------------------------------------------------------------|----------|
+| :------------: | :--------------- | :---------------------------------------------------------------------------------------- | -------- |
 | `mock` or `m`  | any string       | Indicates the mock code used for the current field. Currently, only fakerjs is supported. | see blow |
 
-
 - Examples of mock-related IDL:
-
 
 ```thrift
 
@@ -340,7 +371,6 @@ struct MockStructWithAnnotation {
 ```
 
 - Example of generated mock code:
-
 
 ```typescript
 
