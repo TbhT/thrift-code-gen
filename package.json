@@ -1,13 +1,15 @@
 {
   "name": "@olierjs/thrift-cli",
   "description": "generate typescript code from thrift files",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": "TbhT",
   "bin": {
-    "thrift-cli": "./bin/run.js"
+    "thrift-cli": "bin/run.js"
   },
   "types": "dist/index.d.ts",
-  "bugs": "https://github.com/TbhT/thrift-code-gen/issues",
+  "bugs": {
+    "url": "https://github.com/TbhT/thrift-code-gen/issues"
+  },
   "dependencies": {
     "@creditkarma/thrift-parser": "^2.0.0",
     "@oclif/core": "^4",
@@ -70,10 +72,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:TbhT/thrift-code-gen.git"
+    "url": "git+ssh://git@github.com/TbhT/thrift-code-gen.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.com/"
   },
   "scripts": {
     "build": "shx rm -rf dist && copyfiles -u 1 src/**/*.ejs dist && tsc -b && tsc-alias",
